@@ -1,14 +1,19 @@
 extends CharacterBody3D
 
-# how fast the character moves in meters per second
-@export var speed = 14
-# the downward acceleration when in the air, in meters per second squared
-@export var fall_acceleration = 75
+signal hit
 
+# How fast the player moves in meters per second
+@export var speed = 14
+# The downward acceleration while in the air, in meters per second squared.
+@export var fall_acceleration = 75
+# Vertical impulse applied to the character upon jumping in meters per second.
 @export var jump_impulse = 20
+# Vertical impulse applied to the character upon bouncing over a mob
+# in meters per second.
 @export var bounce_impulse = 16
 
 var target_velocity = Vector3.ZERO
+
 
 func _physics_process(delta):
 	var direction = Vector3.ZERO
@@ -57,3 +62,10 @@ func _physics_process(delta):
 		
 	velocity = target_velocity
 	move_and_slide()
+
+func die():
+	hit.emit()
+	queue_free()
+
+func _on_mob_detector_body_entered(body):
+	die()
